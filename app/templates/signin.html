@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/sign-in.css' %}">
+    <title>Iniciar sesión</title>
+</head>
+<body style="background-color: #EEEE" class="d-flex justify-content-center align-items-center">
+    <div class="container-flex login-form d-flex flex-column">
+        <h1 class="mb-5">Las Unioninas</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {% if error %}
+
+              <div class="alert alert-danger">
+                <p class="fw-bold">¡ERROR!</p>
+                Contraseña o correo incorrecto.
+
+              </div>
+              {% elif void_credentials %}
+                <div class="alert alert-warning">
+                  <p class="fw-bold">¡Advertencia!</p>
+                  Completa los campos.
+
+                </div>
+            {% endif %}
+            <div class="mb-3">
+              <label for="user-email" class="form-label">Correo o nombre de usuario</label>
+              <input name="user-email" class="form-control" id="user-email" aria-describedby="emailHelp">
+            </div>
+    
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" name="password" class="form-control" id="password">
+            </div>
+    
+            <div class="mb-3 form-check">
+              <input type="checkbox" name="keep-session" class="form-check-input" id="keep-session">
+              <label class="form-check-label" for="keep-session">Mantener sesión abierta</label>
+            </div>
+    
+            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+            <a href="{%url 'signup'%}" type="submit" class="btn btn-primary">Registrarme</a>
+        </form>
+    </div>
+</body>
+</html>

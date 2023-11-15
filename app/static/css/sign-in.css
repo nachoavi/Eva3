@@ -1,0 +1,16 @@
+body {
+    height: 100vh;
+}
+
+.login-form {
+
+    display: flex;
+    max-width: 70vh;
+    width: 70vh;
+    max-height: 50vh;
+    height: 50vh;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffff;
+    border-radius: 10px;
+}
