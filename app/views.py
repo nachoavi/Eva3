@@ -30,3 +30,9 @@ def productsTable(request):
 def addProduct(request):
     return render(request,'adShop/productsCrud/addProds.html')
 
+def userTable(request):
+    return render(request,'adShop/userCrud/userTable.html')
+
+def addUser(request):
+    return render(request,'adShop/userCrud/addUser.html')
+

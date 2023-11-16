@@ -11,4 +11,6 @@ urlpatterns = [
     path('indexAdmin/',views.homeAdmin,name='homeAdmin'),
     path('products/',views.productsTable,name="productsTable"),
     path('products/addProduct',views.addProduct,name='addProduct'),
+    path('users/',views.userTable,name='userTable'),
+    path('users/addUser',views.addUser,name='addUser')
 ]
