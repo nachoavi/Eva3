@@ -8,15 +8,15 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="productName">Nombre del producto:</label>
-            <input type="text" class="form-control" id="productName" name="name" required>
+            <input type="text" class="form-control" id="productName" name="name" value="{{productToUpdate.name}}" required>
         </div>
         <div class="form-group">
             <label for="productDescription">Descripción:</label>
-            <textarea class="form-control" id="productDescription" name="description" rows="3" required></textarea>
+            <textarea class="form-control" id="productDescription" name="description" rows="3" value="{{productToUpdate.description}}" required>{{productToUpdate.description}}</textarea>
         </div>
         <div class="form-group">
             <label for="productPrice">Precio:</label>
-            <input type="number" class="form-control" id="productPrice" name="price" required>
+            <input type="number" class="form-control" id="productPrice" name="price" value="{{productToUpdate.price}}" required>
         </div>
         <div class="form-group">
             <label for="productCategory">Categoria:</label>
@@ -28,13 +28,13 @@
         </div>
         <div class="form-group">
             <label for="productStock">Stock:</label>
-            <input type="number" class="form-control" id="productStock" name="stock" required>
+            <input type="number" class="form-control" id="productStock" name="stock" value="{{productToUpdate.stock}}" required>
         </div>
         <div class="form-group">
             <label for="productImage">Imagen URL:</label>
-            <input type="url" class="form-control" id="productImage" name="urlImage" required>
+            <input type="url" class="form-control" id="productImage" name="urlImage" value="{{productToUpdate.urlImage}}" required>
         </div>
-        <button type="submit" class="btn btn-primary mt-4">Subir</button>
+        <button type="submit" class="btn btn-primary mt-4">Actualizar</button>
     </form>
 </div> 
 
