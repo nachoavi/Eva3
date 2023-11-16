@@ -15,13 +15,17 @@ class Users(models.Model):
     cart = models.OneToOneField('ShoppingCart', on_delete=models.CASCADE,null=True)
     credits = models.IntegerField(null=False,default=0)
     role = models.ForeignKey(Roles, on_delete=models.PROTECT)
-    
+
+class ProductCategory(models.Model):
+    category = models.CharField(max_length=100,null=False)
 
 class Products(models.Model):
     name = models.CharField(max_length=255,null=False)
     description = models.TextField(null=False)
     price = models.PositiveIntegerField(null=False)
+    category = models.ForeignKey(ProductCategory, on_delete=models.PROTECT)
     stock = models.PositiveIntegerField(null=False)
+    urlImage = models.URLField(null=False)
     
 class ShoppingCart(models.Model):
     user = models.ForeignKey(Users, on_delete=models.PROTECT)

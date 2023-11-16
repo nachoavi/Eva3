@@ -4,7 +4,7 @@ from .models import *
 # Create your views here.
 
 def home(request):
-    return render(request,'index.html')
+    return render(request,'shop/index.html')
 
 def signin(request):
     return render(request,'signin.html')
@@ -21,7 +21,12 @@ def shopCart(request):
 
 #ADMIN ONLY
 
+def homeAdmin(request):
+    return render(request,'adShop/index.html')
+
 def productsTable(request):
     return render(request,'adShop/productsCrud/tableProds.html')
 
+def addProduct(request):
+    return render(request,'adShop/productsCrud/addProds.html')
 

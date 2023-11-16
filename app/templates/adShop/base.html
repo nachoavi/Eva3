@@ -24,12 +24,8 @@
             <h1 class="fw-bold">Tech <span class="special-text">Shop</span></h1>
             <nav class="mt-5 d-flex flex-column h-100">
                 <ul class="d-flex flex-column gap-5 align-items-start justify-content-start">
-                        <span>Usuario normal</span>
-                        <li><i class="fa-solid fa-house"></i><a href="{%url 'index'%}">Inicio</a></li>
-                        <li><i class="fa-solid fa-microchip"></i><a href="{%url 'catalog'%}">Catalogo Completo</a></li>
-                        <li><i class="fa-solid fa-cart-shopping"></i><a href="{%url 'shopCart'%}">Mi Carrito</a></li>
                         <span>Admin</span>
-                        <li><i class="fa-solid fa-house"></i><a href="#">Inicio</a></li>
+                        <li><i class="fa-solid fa-house"></i><a href="{%url 'homeAdmin'%}">Inicio</a></li>
                         <li><i class="fa-solid fa-user-plus fa-sm"></i><a href="#">Usuarios</a></li>
                         <li><i class="fa-solid fa-shop fa-sm"></i><a href="#">Ventas</a></li>
                         <li><i class="fa-solid fa-boxes-stacked"></i><a href="{%url 'productsTable'%}">Productos</a></li>
@@ -46,10 +42,6 @@
             <header class="layout-header">
                 <i class="menu fa-sharp fa-solid fa-bars" id="menu" aria-expanded="false"></i>
                 <h1 class="title-responsive fw-bold" id="title-desktop">The <span class="special-text">TechShop</span></h1>
-                <ul>
-                    <li><a href="{%url 'signin'%}">Iniciar sesión</a></li>
-                    <li><a href="{%url 'signup'%}">Crear Cuenta</a></li>
-                </ul>
                 <div>
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
