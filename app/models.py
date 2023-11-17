@@ -11,10 +11,10 @@ class Users(models.Model):
     email = models.EmailField(max_length=255, null=False)
     address = models.TextField(blank=True, null=True)
     username = models.CharField(max_length=50,null=False)
-    password = models.CharField(max_length=50,null=False)
+    password = models.BinaryField(max_length=50,null=False)
     cart = models.OneToOneField('ShoppingCart', on_delete=models.CASCADE,null=True)
     credits = models.IntegerField(null=False,default=0)
-    role = models.ForeignKey(Roles, on_delete=models.PROTECT)
+    role = models.ForeignKey(Roles, on_delete=models.PROTECT, default=1)
 
 class ProductCategory(models.Model):
     category = models.CharField(max_length=100,null=False)

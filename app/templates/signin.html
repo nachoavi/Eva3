@@ -18,7 +18,7 @@
 
               <div class="alert alert-danger">
                 <p class="fw-bold">¡ERROR!</p>
-                Contraseña o correo incorrecto.
+                Contraseña y/o usuario incorrectos.
 
               </div>
               {% elif void_credentials %}
@@ -29,8 +29,8 @@
                 </div>
             {% endif %}
             <div class="mb-3">
-              <label for="user-email" class="form-label">Correo o nombre de usuario</label>
-              <input name="user-email" class="form-control" id="user-email" aria-describedby="emailHelp">
+              <label for="username" class="form-label">Nombre de usuario</label>
+              <input name="username" class="form-control" id="username" aria-describedby="emailHelp">
             </div>
     
             <div class="mb-3">
