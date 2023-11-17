@@ -12,6 +12,10 @@ urlpatterns = [
     path('indexAdmin/',views.homeAdmin,name='homeAdmin'),
     path('products/',views.productsTable,name="productsTable"),
     path('products/addProduct',views.addProduct,name='addProduct'),
+    path('products/updateProduct/<int:id>',views.updateProduct,name='updateProduct'),
+    path('products/deleteProduct/<int:id>',views.deleteProduct,name='deleteProduct'),
     path('users/',views.userTable,name='userTable'),
-    path('users/addUser',views.addUser,name='addUser')
+    path('users/addUser',views.addUser,name='addUser'),
+    path('users/updateUser/<int:id>',views.updateUser,name='updateUser'),
+    path('users/deleteUser/<int:id>',views.deleteUser,name='deleteUser'),
 ]

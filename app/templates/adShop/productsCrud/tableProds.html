@@ -5,36 +5,29 @@
 <div class="container mt-5">
     <h2>Lista de Productos</h2>
     <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Nombre</th>
-          <th scope="col">Descripción</th>
-          <th scope="col">Precio</th>
-          <th scope="col">Stock</th>
-          <th scope="col">Acciones</th>
-        </tr>
-      </thead>
+
       <tbody>
-        <!--{% for product in products %}--> 
+        {% for product in products %}
           <tr>
-            <th scope="row"></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{product.name}}</td>
+            <td>{{product.description}}</td>
+            <td>{{product.price}}</td>
+            <td>{{product.category.category}}</td>
+            <td>{{product.stock}}</td>
+            <td><img src="{{product.urlImage}}" width="100%" height="100vh" ></td>
+
             <td>
-              <a href="#" class="btn btn-warning btn-sm">Editar</a>
-              <a href="#" class="btn btn-danger btn-sm">Eliminar</a>
+              <a href="{%url 'updateProduct' product.id%}" class="btn btn-warning btn-sm">Editar</a>
+              <a href="{%url 'deleteProduct' product.id%}" class="btn btn-danger btn-sm">Eliminar</a>
             </td>
           </tr>
-        <!-- {% endfor %} -->
+         {% endfor %}
       </tbody>
     </table>
   
     <a href="{%url 'addProduct'%}" class="btn btn-primary">Agregar Producto</a>
   </div>
 
-{% endblock content %}
+{% endblock content %} 
 
 
