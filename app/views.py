@@ -15,10 +15,10 @@ def generate_encrypt_password(password):
 def login_check_password(password_entry, password_db):
     encode_pass = password_entry.encode('utf-8')
     result = bcrypt.checkpw(encode_pass, password_db)
-
     return result
 
 def home(request):
+    print(request.session.get("role"))
     return render(request,'shop/index.html')
 
 def signin(request):
@@ -32,6 +32,7 @@ def signin(request):
         
             if login_check:
                 request.session["isAuthenticated"] = True
+                request.session["role"] = user.role_id
                 return redirect("/")
             else:
                 return render(request,'signin.html', {"error": "error"})
@@ -56,12 +57,13 @@ def signup(request):
 
         new_user.save()
 
-        return redirect("signup")
+        return redirect("/signin")
     else:
         return render(request,'signup.html')
     
 def logout(request):
     del request.session['isAuthenticated']
+    del request.session['role']
     return redirect("/")
 
 def catalog(request):

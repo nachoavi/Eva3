@@ -28,14 +28,22 @@
                 <a href="{%url 'shopCart'%}" class="" >Mi Carrito<i class="fas fa-shopping-cart"></i></a>
 
                 <div class="additional-options">
-                    {% if user_auth %}
+                    {% if user_auth and role == 1 %}
                         <a href="{%url 'logout'%}">Cerrar sesión</a>
+                    
+                    {% elif user_auth and role == 2 %}
+                        <a href="{%url 'logout'%}">Cerrar sesión</a>
+                        <a href="{%url 'dashboard'%}">Dashboard</a>
                     {% else %}
                         <a href="{%url 'signin'%}">Iniciar sesión</a>
+                        <a href="{%url 'signup'%}">Crear cuenta</a>
                     {% endif %}
                     
-                    <a href="{%url 'signup'%}">Crear cuenta</a>
+                    
+                    
                 </div>
+                
+        
             </nav>
         </aside>
 
