@@ -2,13 +2,12 @@
 
 {% block content %}
 
-
+ 
 <div class="container mt-5">
     <h2>Carrito de Compras</h2>
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">#</th>
           <th scope="col">Producto</th>
           <th scope="col">Precio</th>
           <th scope="col">Cantidad</th>
@@ -17,34 +16,39 @@
         </tr>
       </thead>
       <tbody>
+        {% if items %}
+        {% for item in items %}
         <tr>
-          <th scope="row">1</th>
-          <td>Producto 1</td>
-          <td>$20.00</td>
-          <td>2</td>
-          <td>$40.00</td>
+          <td>{{item.product.name}}</td>
+          <td>{{item.product.price}}</td>
+          <td>{{item.amount}}</td>
+          <td>{{item.total}}</td>
           <td>
-            <button class="btn btn-danger btn-sm">Eliminar del carrito</button>
+            <a href="{%url 'dellToCart' item.id %}" class="btn btn-danger btn-sm">Eliminar del carrito</a>
           </td>
         </tr>
+        {% endfor %}
+        {% else %}
         <tr>
-          <th scope="row">2</th>
-          <td>Producto 2</td>
-          <td>$30.00</td>
-          <td>1</td>
-          <td>$30.00</td>
-          <td>
-            <button class="btn btn-danger btn-sm">Eliminar del carrito</button>
-          </td>
+          <td><h5>Esto se ve muy vacio</h5></td>
         </tr>
+        {% endif %}
       </tbody>
     </table>
   
     <div class="text-right">
-      <h4>Total: $70.00</h4>
-      <button class="btn btn-primary">Pagar</button>
+      <h4>Total: {{total}}</h4>
+      <a href="{% url 'confirmOrder' %}" class="btn btn-primary">Pagar</a>
     </div>
   </div>
+
+  {% if messages %}
+        <ul class="messages">
+        {% for message in messages %}
+            <li {% if message.tags %} class="fs-5 fw-bold text-danger"{% endif %}>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
 
 
 {% endblock content %}
