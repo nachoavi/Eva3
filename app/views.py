@@ -57,7 +57,6 @@ def signup(request):
         password = request.POST.get("password")
         password_encrypt = generate_encrypt_password(password)
 
-
         new_user = Users(name=name, lastname=lastname, email=email, username=username, password=password_encrypt)
 
         new_user.save()
@@ -81,10 +80,6 @@ def logout(request):
     del request.session['isAuthenticated']
     del request.session['id']
     del request.session['role']
-    shoppingCartToDelete = ShoppingCart.objects.all()
-    itemCartToDelete = ItemCart.objects.all()
-    shoppingCartToDelete.delete()
-    itemCartToDelete.delete()
     return redirect("/")
 
 def catalog(request):
@@ -101,7 +96,7 @@ def addToCart(request,id):
     if productSelected.stock > 0:
         item,item_created = ItemCart.objects.get_or_create(cart=cart,product=productSelected)
     else:
-        messages.error(request,'No queda stock de este producto')
+        messages.error(request,'No queda suficiente stock')
         return redirect('catalog')
     
     if not item_created:
@@ -135,20 +130,22 @@ def dellToCart(request,id):
     items = ItemCart.objects.filter(cart=cart,id=id)
     items.delete()
     return redirect('shopCart')
-        
+
+@custom_login_required
 def confirmOrder(request):
     user =  request.session["id"]
     userInSession = get_object_or_404(Users,id=user)
+    cart = ShoppingCart.objects.get(user=userInSession)
     
     if not ShoppingCart.objects.all():
         messages.error(request,'No hay nada que pagar aquí:)')
         return redirect('shopCart')
     
-    cart = ShoppingCart.objects.get(user=userInSession)
-    
     if not ItemCart.objects.filter(cart=cart).exists():
         messages.error(request,'No hay nada que pagar aquí:)')
         return redirect('shopCart')
+    
+    
     
     total_cart = sum(item.product.price * item.amount for item in ItemCart.objects.filter(cart=cart))
     try:
@@ -161,18 +158,19 @@ def confirmOrder(request):
                 product = item.product
                 product.stock -= item.amount
                 product.save()
+        newOrder.isProcessed = True        
         newOrder.save()
-        shoppingCartToDelete = ShoppingCart.objects.all()
-        itemCartToDelete = ItemCart.objects.all()
-        shoppingCartToDelete.delete()
-        itemCartToDelete.delete()
         return redirect('catalog')
     except IntegrityError:
         existingOrder = Order.objects.get(cart=cart)
         existingOrder.address = userInSession.address
         existingOrder.total = total_cart
+        for item in ItemCart.objects.filter(cart=cart):
+                product = item.product
+                product.stock -= item.amount
+                product.save()
+        existingOrder.isProcessed = True
         existingOrder.save()
-        newOrder.isProcessed = True
         return redirect('catalog')
     
     
@@ -272,7 +270,7 @@ def updateUser(request,id):
         userToUpdate.save()
         return redirect('userTable')
         
-    
+     
 def deleteUser(request,id):
     userToDelete = Users.objects.get(id=id)
     userToDelete.delete()
