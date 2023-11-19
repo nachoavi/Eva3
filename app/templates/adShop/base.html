@@ -24,14 +24,17 @@
             <h1 class="fw-bold">Tech <span class="special-text">Shop</span></h1>
             <nav class="mt-5 d-flex flex-column h-100">
                 <ul class="d-flex flex-column gap-5 align-items-start justify-content-start">
-                        <span>Admin</span>
                         <li><i class="fa-solid fa-house"></i><a href="{%url 'dashboard'%}">Inicio</a></li>
                         <li><i class="fa-solid fa-user-plus fa-sm"></i><a href="{%url 'userTable'%}">Usuarios</a></li>
                         <li><i class="fa-solid fa-shop fa-sm"></i><a href="#">Ventas</a></li>
                         <li><i class="fa-solid fa-boxes-stacked"></i><a href="{%url 'productsTable'%}">Productos</a></li>
                 </ul>
                     
+                
+                <ul class="d-flex flex-column justify-content-center">
+                    <li><i class="fa-solid fa-right-from-bracket"></i><a href="{% url "logout" %}">Cerrar sesión</a></li>
                 </ul>
+
 
             </nav>
 
@@ -42,23 +45,6 @@
             <header class="layout-header">
                 <i class="menu fa-sharp fa-solid fa-bars" id="menu" aria-expanded="false"></i>
                 <h1 class="title-responsive fw-bold" id="title-desktop">The <span class="special-text">TechShop</span></h1>
-                <div>
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <ion-icon name="person-circle-outline" class="avatar"></ion-icon>
-                        
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Seguridad</a></li>
-                        <li><a class="dropdown-item" href="#">Información de contacto</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
-                    </ul>
-            
-                </div>
-    
             </header>
 
             <div class="layout-content p-3" id="layout-content">

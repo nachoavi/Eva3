@@ -1,0 +1,15 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+
+
+<div class="container mt-5">
+    <h1 class="mb-5">Detalle de Orden</h1>
+    <h2 class="mb-5">Datos de la Orden</h2>
+    <p><strong>Fecha de Creación:</strong> {{ last_order.createdAt }}</p>
+    <p><strong>Dirección de Envío:</strong> {{ last_order.address }}</p>
+    <p><strong>Total:</strong> ${{ last_order.total }}</p>
+
+</div>
+
+{% endblock content %}

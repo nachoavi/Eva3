@@ -9,7 +9,7 @@ class Users(models.Model):
     name = models.CharField(max_length=60)
     lastname = models.CharField(max_length=60)
     email = models.EmailField(max_length=255, null=False)
-    address = models.TextField(blank=True, null=True)
+    address = models.CharField(max_length=255,blank=True, null=True)
     username = models.CharField(max_length=50,null=False)
     password = models.BinaryField(max_length=50,null=False)
     cart = models.OneToOneField('ShoppingCart', on_delete=models.CASCADE,null=True)
@@ -38,8 +38,8 @@ class ItemCart(models.Model):
     amount = models.PositiveIntegerField(default=1,null=False)
     
 class Order(models.Model):
-    cart = models.OneToOneField(ShoppingCart, on_delete=models.CASCADE)
-    address = models.TextField(null=False)
+    cart = models.ForeignKey(ShoppingCart, on_delete=models.CASCADE)
+    address = models.CharField(max_length=255,null=False)
     total = models.PositiveIntegerField(null=False)
     createdAt = models.DateTimeField(auto_now_add=True)
     isProcessed = models.BooleanField(default=False)

@@ -1,6 +1,10 @@
 from django.shortcuts import render,redirect,HttpResponse,get_object_or_404
 from .models import *
+from django.contrib import messages
+from django.db import IntegrityError
+from django.db.models import Sum,F
 from django.core.exceptions import ObjectDoesNotExist
+from functools import wraps
 import bcrypt
 
 # Create your views here.
@@ -32,6 +36,7 @@ def signin(request):
         
             if login_check:
                 request.session["isAuthenticated"] = True
+                request.session["id"] = user.id
                 request.session["role"] = user.role_id
                 return redirect("/")
             else:
@@ -48,12 +53,12 @@ def signup(request):
         name = request.POST.get("name")
         lastname = request.POST.get("lastname")
         email = request.POST.get("email")
+        address = request.POST.get("address")
         username = request.POST.get("username")
         password = request.POST.get("password")
         password_encrypt = generate_encrypt_password(password)
 
-
-        new_user = Users(name=name, lastname=lastname, email=email, username=username, password=password_encrypt)
+        new_user = Users(name=name, lastname=lastname, email=email, address=address, username=username, password=password_encrypt)
 
         new_user.save()
 
@@ -61,18 +66,112 @@ def signup(request):
     else:
         return render(request,'signup.html')
     
+def custom_login_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        user_id = request.session.get('id')
+        if not user_id:
+            return redirect('signin')
+        
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+    
+    
 def logout(request):
     del request.session['isAuthenticated']
+    del request.session['id']
     del request.session['role']
     return redirect("/")
 
 def catalog(request):
-    return render(request,'shop/catalog.html')
+    products = Products.objects.all()
+    if request.method == 'GET':
+        return render(request,'shop/catalog.html',{'products':products})
+
+@custom_login_required
+def addToCart(request,id):
+    user = request.session["id"]
+    userInSession = get_object_or_404(Users,id=user)
+    cart, created = ShoppingCart.objects.get_or_create(user=userInSession)
+    productSelected = get_object_or_404(Products,id=id)
+    if productSelected.stock > 0:
+        item,item_created = ItemCart.objects.get_or_create(cart=cart,product=productSelected)
+    else:
+        messages.error(request,'No queda suficiente stock')
+        return redirect('catalog')
+    
+    if not item_created:
+        item.amount += 1
+        item.save()
+    return redirect('catalog')
 
 def shopCart(request):
-    return render(request,'shop/sCart.html')
+    try:
+        user = request.session["id"]
+        userInSession = get_object_or_404(Users,id=user)
+        print(userInSession.name)
+    except KeyError:
+        userInSession = None
+    try:
+        cart = ShoppingCart.objects.get(user=userInSession)
+        items = ItemCart.objects.filter(cart=cart)
+        items = items.annotate(total=F('product__price') * F('amount'))
+        total_cart = sum(item.product.price * item.amount for item in ItemCart.objects.filter(cart=cart))
+    except ShoppingCart.DoesNotExist:
+        cart = None
+        items = []
+        total_cart = 0
+    
+    return render(request,'shop/sCart.html',{'cart':cart, 'items':items,'total':total_cart})
 
+def dellToCart(request,id):
+    user = request.session["id"]
+    userInSession = get_object_or_404(Users,id=user)
+    cart = ShoppingCart.objects.get(user=userInSession)
+    items = ItemCart.objects.filter(cart=cart,id=id)
+    items.delete()
+    return redirect('shopCart')
 
+@custom_login_required
+def confirmOrder(request):
+    user =  request.session["id"]
+    userInSession = get_object_or_404(Users,id=user)
+    cart = ShoppingCart.objects.get(user=userInSession)
+    
+    total_cart = sum(item.product.price * item.amount for item in ItemCart.objects.filter(cart=cart))
+
+    if not ShoppingCart.objects.all():
+        messages.error(request,'No hay nada que pagar aquí:)')
+        return redirect('shopCart')
+                
+    if not ItemCart.objects.filter(cart=cart).exists():
+        messages.error(request,'No hay nada que pagar aquí:)')
+        return redirect('shopCart')
+    
+    newOrder = Order.objects.create(
+        cart=cart,
+        address=userInSession.address,
+        total=total_cart
+        )
+    for item in ItemCart.objects.filter(cart=cart):
+            product = item.product
+
+            if product.stock == 0:
+                messages.error(request,'No existe stock')
+                return redirect('shopCart')
+
+            else:
+                product.stock -= item.amount
+                product.save()
+
+    newOrder.isProcessed = True    
+    newOrder.save()
+
+    last_order = Order.objects.filter(cart=cart).last()
+
+    return render(request, "shop/orderDetail.html", {"last_order": last_order})
+
+        
 #ADMIN ONLY
 
 def homeAdmin(request):
@@ -135,13 +234,15 @@ def addUser(request):
         return render(request,'adShop/userCrud/addUser.html',{'roles':roles})
     else:
         roleSelected = Roles.objects.get(id=request.POST.get('role'))
+        password = request.POST.get("password")
+        password_encrypt = generate_encrypt_password(password)
         newUser = Users.objects.create(
             name=request.POST['name'],
             lastname=request.POST['lastname'],
             email=request.POST['email'],
             address=request.POST['address'],
             username=request.POST['username'],
-            password=request.POST['password'],
+            password=password_encrypt,
             role=roleSelected
         )
         newUser.save()
@@ -159,12 +260,12 @@ def updateUser(request,id):
         userToUpdate.email = request.POST.get('email')
         userToUpdate.address = request.POST.get('address')
         userToUpdate.username = request.POST.get('username')
-        userToUpdate.password = request.POST.get('password')
+        userToUpdate.password = generate_encrypt_password(request.POST.get('password'))
         userToUpdate.role = roleSelected
         userToUpdate.save()
         return redirect('userTable')
         
-    
+     
 def deleteUser(request,id):
     userToDelete = Users.objects.get(id=id)
     userToDelete.delete()
