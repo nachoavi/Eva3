@@ -271,5 +271,9 @@ def deleteUser(request,id):
     userToDelete.delete()
     return redirect('userTable')
     
+def viewSales(request):
+    if request.method == 'GET':
+        orders = Order.objects.all()
+        return render(request,'adShop/sales/viewSales.html',{'orders':orders})
         
 

@@ -1,0 +1,33 @@
+{% extends 'adShop/base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2>Order List</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Usuarios</th>
+                <th scope="col">Dirección</th>
+                <th scope="col">Total</th>
+                <th scope="col">Creado en</th>
+                <th scope="col">Procesado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr>
+                    <th scope="row">{{ order.id }}</th>
+                    <td>{{ order.cart.user.name }}</td>
+                    <td>{{ order.address }}</td>
+                    <td>{{ order.total }}</td>
+                    <td>{{ order.createdAt }}</td>
+                    <td>{{ order.isProcessed }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

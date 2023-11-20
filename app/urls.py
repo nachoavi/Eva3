@@ -21,4 +21,5 @@ urlpatterns = [
     path('dashboard/users/addUser',views.addUser,name='addUser'),
     path('dashboard/users/updateUser/<int:id>',views.updateUser,name='updateUser'),
     path('dashboard/users/deleteUser/<int:id>',views.deleteUser,name='deleteUser'),
+    path('dashboard/sales/viewSales/',views.viewSales,name='viewSales')
 ]
