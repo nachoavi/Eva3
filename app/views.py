@@ -6,8 +6,9 @@ from django.db.models import Sum,F
 from django.core.exceptions import ObjectDoesNotExist
 from functools import wraps
 import bcrypt
+import json
 
-# Create your views here.
+# Create your views here. 
 
 def generate_encrypt_password(password):
     bytes = password.encode('utf-8')
@@ -88,88 +89,82 @@ def catalog(request):
     if request.method == 'GET':
         return render(request,'shop/catalog.html',{'products':products})
 
-@custom_login_required
+
 def addToCart(request,id):
-    user = request.session["id"]
-    userInSession = get_object_or_404(Users,id=user)
-    cart, created = ShoppingCart.objects.get_or_create(user=userInSession)
     productSelected = get_object_or_404(Products,id=id)
-    if productSelected.stock > 0:
-        item,item_created = ItemCart.objects.get_or_create(cart=cart,product=productSelected)
-    else:
-        messages.error(request,'No queda suficiente stock')
-        return redirect('catalog')
+    if 'cart' not in request.session:
+        request.session['cart'] = []
+        
+    cart = request.session['cart']
+    cart.append({
+        'id':productSelected.id,
+        'name': productSelected.name,
+        'description': productSelected.description,
+        'price': productSelected.price,
+        'category': productSelected.category.category,
+        'stock': productSelected.stock,
+        'urlImage': productSelected.urlImage,
+        'quantity': 1
+    })
     
-    if not item_created:
-        item.amount += 1
-        item.save()
+    request.session['cart'] = cart
+    
     return redirect('catalog')
 
 def shopCart(request):
-    try:
-        user = request.session["id"]
-        userInSession = get_object_or_404(Users,id=user)
-        print(userInSession.name)
-    except KeyError:
-        userInSession = None
-    try:
-        cart = ShoppingCart.objects.get(user=userInSession)
-        items = ItemCart.objects.filter(cart=cart)
-        items = items.annotate(total=F('product__price') * F('amount'))
-        total_cart = sum(item.product.price * item.amount for item in ItemCart.objects.filter(cart=cart))
-    except ShoppingCart.DoesNotExist:
-        cart = None
-        items = []
-        total_cart = 0
-    
-    return render(request,'shop/sCart.html',{'cart':cart, 'items':items,'total':total_cart})
+    cart = request.session.get('cart',[])
+    total = sum(item['price'] for item in cart)
+    return render(request,'shop/sCart.html',{'cart':cart,'total':total})
 
-def dellToCart(request,id):
-    user = request.session["id"]
-    userInSession = get_object_or_404(Users,id=user)
-    cart = ShoppingCart.objects.get(user=userInSession)
-    items = ItemCart.objects.filter(cart=cart,id=id)
-    items.delete()
+def dellToCart(request):
+    if 'cart' in request.session:
+        del request.session['cart']
     return redirect('shopCart')
 
 @custom_login_required
 def confirmOrder(request):
     user =  request.session["id"]
-    userInSession = get_object_or_404(Users,id=user)
-    cart = ShoppingCart.objects.get(user=userInSession)
+    userInSession = Users.objects.get(id=user)
+    cart = request.session.get('cart',[])
     
-    total_cart = sum(item.product.price * item.amount for item in ItemCart.objects.filter(cart=cart))
-
-    if not ShoppingCart.objects.all():
+    if not cart:
         messages.error(request,'No hay nada que pagar aquí:)')
         return redirect('shopCart')
-                
-    if not ItemCart.objects.filter(cart=cart).exists():
-        messages.error(request,'No hay nada que pagar aquí:)')
-        return redirect('shopCart')
+    
+    total = sum(item['price'] for item in cart)
+    productID = cart[0].get('id')
+    productName = cart[0].get('name')
+    
+    products = Products.objects.filter(id=productID)
+    
     
     newOrder = Order.objects.create(
-        cart=cart,
+        user=userInSession,
         address=userInSession.address,
-        total=total_cart
+        total=total
         )
-    for item in ItemCart.objects.filter(cart=cart):
-            product = item.product
+    newOrder.products.set(products)
+    
+    
+    for item in Products.objects.filter(name=productName):
 
-            if product.stock == 0:
+            if item.stock == 0:
                 messages.error(request,'No existe stock')
                 return redirect('shopCart')
-
             else:
-                product.stock -= item.amount
-                product.save()
+                for product in cart:
+                    item.stock -= product['quantity']
+                    item.save()
 
     newOrder.isProcessed = True    
     newOrder.save()
+    
+    del request.session['cart']
 
-    last_order = Order.objects.filter(cart=cart).last()
+    last_order = Order.objects.filter(user=userInSession).last()
 
-    return render(request, "shop/orderDetail.html", {"last_order": last_order})
+    
+    return render(request, "shop/orderDetail.html", {"last_order": last_order,'products':products})
 
         
 #ADMIN ONLY

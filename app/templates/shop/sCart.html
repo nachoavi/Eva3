@@ -10,21 +10,17 @@
         <tr>
           <th scope="col">Producto</th>
           <th scope="col">Precio</th>
-          <th scope="col">Cantidad</th>
-          <th scope="col">Total</th>
           <th scope="col">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        {% if items %}
-        {% for item in items %}
+        {% if cart %}
+        {% for item in cart %}
         <tr>
-          <td>{{item.product.name}}</td>
-          <td>{{item.product.price}}</td>
-          <td>{{item.amount}}</td>
-          <td>{{item.total}}</td>
+          <td>{{item.name}}</td>
+          <td>{{item.price}}</td>
           <td>
-            <a href="{%url 'dellToCart' item.id %}" class="btn btn-danger btn-sm">Eliminar del carrito</a>
+            <a href="{%url 'dellToCart'%}" class="btn btn-danger btn-sm">Eliminar del carrito</a>
           </td>
         </tr>
         {% endfor %}
@@ -39,6 +35,7 @@
     <div class="text-right">
       <h4>Total: {{total}}</h4>
       <a href="{% url 'confirmOrder' %}" class="btn btn-primary">Pagar</a>
+      <a href="{%url 'dellToCart'%}" class="btn btn-danger">Vaciar carrito</a>
     </div>
   </div>
 

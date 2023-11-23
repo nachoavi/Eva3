@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-
+ 
 
 urlpatterns = [
     path('signin/',views.signin,name='signin'),
@@ -10,7 +10,7 @@ urlpatterns = [
     path('',views.catalog,name='catalog'),
     path('shop/shopCart',views.shopCart,name='shopCart'),
     path('addToCart/<int:id>',views.addToCart,name='addToCart'),
-    path('dellToCart/<int:id>',views.dellToCart,name='dellToCart'),
+    path('dellToCart/',views.dellToCart,name='dellToCart'),
     path('confirmOrder/',views.confirmOrder,name='confirmOrder'),
     path('dashboard/',views.homeAdmin,name='dashboard'),
     path('dashboard/products/',views.productsTable,name="productsTable"),

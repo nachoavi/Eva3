@@ -19,9 +19,9 @@
             {% for order in orders %}
                 <tr>
                     <th scope="row">{{ order.id }}</th>
-                    <td>{{ order.cart.user.name }}</td>
+                    <td>{{ order.user.name }}</td>
                     <td>{{ order.address }}</td>
-                    <td>{{ order.total }}</td>
+                    <td>${{ order.total }}</td>
                     <td>{{ order.createdAt }}</td>
                     <td>{{ order.isProcessed }}</td>
                 </tr>

@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+# Crea te your models here.
 
 class Roles(models.Model):
     role = models.CharField(max_length=50)
@@ -12,7 +12,6 @@ class Users(models.Model):
     address = models.CharField(max_length=255,blank=True, null=True)
     username = models.CharField(max_length=50,null=False)
     password = models.BinaryField(max_length=50,null=False)
-    cart = models.OneToOneField('ShoppingCart', on_delete=models.CASCADE,null=True)
     credits = models.IntegerField(null=False,default=0)
     role = models.ForeignKey(Roles, on_delete=models.PROTECT, default=1)
 
@@ -26,20 +25,12 @@ class Products(models.Model):
     category = models.ForeignKey(ProductCategory, on_delete=models.PROTECT)
     stock = models.PositiveIntegerField(null=False)
     urlImage = models.URLField(null=False)
-    
-class ShoppingCart(models.Model):
-    user = models.ForeignKey(Users, on_delete=models.PROTECT)
-    productsInCart = models.ManyToManyField(Products,through='ItemCart')
-    createdAt = models.DateTimeField(auto_now_add=True)
-    
-class ItemCart(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    cart = models.ForeignKey(ShoppingCart, on_delete=models.CASCADE)
-    amount = models.PositiveIntegerField(default=1,null=False)
+        
     
 class Order(models.Model):
-    cart = models.ForeignKey(ShoppingCart, on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, on_delete=models.PROTECT)
     address = models.CharField(max_length=255,null=False)
+    products = models.ManyToManyField(Products)
     total = models.PositiveIntegerField(null=False)
     createdAt = models.DateTimeField(auto_now_add=True)
     isProcessed = models.BooleanField(default=False)
