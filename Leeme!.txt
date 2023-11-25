@@ -1,0 +1,15 @@
+Usuario Admin:
+
+Username: root
+Password: root
+
+Usuario Normal:
+
+Username: test01
+Password: test01
+
+Se instalo extra:
+pip install bcrypt
+
+Proyecto en github:
+https://github.com/nachoavi/Eva3.git
