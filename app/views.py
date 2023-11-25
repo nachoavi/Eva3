@@ -82,6 +82,7 @@ def logout(request):
     del request.session['isAuthenticated']
     del request.session['id']
     del request.session['role']
+    
     return redirect("/")
 
 def catalog(request):
@@ -92,9 +93,15 @@ def catalog(request):
 
 def addToCart(request,id):
     productSelected = get_object_or_404(Products,id=id)
-    if 'cart' not in request.session:
-        request.session['cart'] = []
+    
+    if productSelected.stock <= 0:
+        messages.error(request,'No existe stock de este producto')
+        return redirect('catalog')
         
+    
+    if 'cart' not in request.session:
+        request.session['cart'] = []    
+    
     cart = request.session['cart']
     cart.append({
         'id':productSelected.id,
@@ -116,9 +123,28 @@ def shopCart(request):
     total = sum(item['price'] for item in cart)
     return render(request,'shop/sCart.html',{'cart':cart,'total':total})
 
-def dellToCart(request):
+def dellToCart(request,id):
+    if 'cart' in request.session:
+        cart = request.session['cart']
+        
+        for item in cart:
+            if item['id'] == id:
+                
+                if item['quantity'] > 1:
+                    item['quantity'] -= 1
+                else:
+                    cart.remove(item)
+                
+                request.session['cart'] = cart
+                request.session.save()
+                break
+   
+    return redirect('shopCart')
+
+def emptyCart(request):
     if 'cart' in request.session:
         del request.session['cart']
+        request.session.save()
     return redirect('shopCart')
 
 @custom_login_required

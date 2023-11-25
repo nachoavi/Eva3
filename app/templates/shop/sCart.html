@@ -20,7 +20,7 @@
           <td>{{item.name}}</td>
           <td>{{item.price}}</td>
           <td>
-            <a href="{%url 'dellToCart'%}" class="btn btn-danger btn-sm">Eliminar del carrito</a>
+            <a href="{%url 'dellToCart' item.id %}" class="btn btn-danger btn-sm">Eliminar del carrito</a>
           </td>
         </tr>
         {% endfor %}
@@ -35,7 +35,7 @@
     <div class="text-right">
       <h4>Total: {{total}}</h4>
       <a href="{% url 'confirmOrder' %}" class="btn btn-primary">Pagar</a>
-      <a href="{%url 'dellToCart'%}" class="btn btn-danger">Vaciar carrito</a>
+      <a href="{% url 'emptyCart' %}" class="btn btn-danger">Vaciar carrito</a>
     </div>
   </div>
 
